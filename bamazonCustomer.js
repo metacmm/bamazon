@@ -24,24 +24,24 @@ function placeOrder() {
         }
     ]).then(function (response) {
         const req_item_id = response.productId;
-        const req_num_tobuy = response.quantity;
+        const req_num_tobuy = parseInt(response.quantity);
 
         /**
          * 
          */
         conn.query("SELECT price, stock_quantity FROM products WHERE item_id = ?", [req_item_id], function (err, dbRes) {
             if (err) throw err;
-            const rows = JSON.parse(JSON.stringify(dbRes));
-            if (rows.length == 0) {
+            if (dbRes.length == 0) {
                 console.log("Product Not Found!");
             } else {
-                const row = rows[0];
-                if (row.stock_quantity < req_num_tobuy) {
+                let price = dbRes[0].price;
+                let stock = dbRes[0].stock_quantity;
+                if (stock < req_num_tobuy) {
                     console.log("Insufficient quantity!");
                     conn.end();
                 } else {
-                    dbUpdate.updateInventory(req_item_id, row.stock_quantity - req_num_tobuy, ()=>{conn.end()});
-                    let totalPrice = row.price * req_num_tobuy;
+                    dbUpdate.updateInventory(req_item_id, -req_num_tobuy, ()=>{conn.end()});
+                    let totalPrice = price * req_num_tobuy;
                     console.log("Your total price is " + totalPrice);
                 }
             }
