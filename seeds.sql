@@ -5,9 +5,10 @@ USE bamazon;
 CREATE TABLE products(
 	item_id INTEGER NOT NULL AUTO_INCREMENT,
     product_name VARCHAR(200) NOT NULL,
-    department_name VARCHAR(50) NULL,
+    department_name VARCHAR(50) NOT NULL,
     price DECIMAL(10,2) NOT NULL,
-    stock_quantity INTEGER NULL,
+    stock_quantity INTEGER NOT NULL,
+    product_sales INTEGER NULL,
     PRIMARY KEY(item_id)
 );
 
@@ -21,3 +22,15 @@ INSERT INTO products(product_name, department_name, price, stock_quantity) VALUE
 INSERT INTO products(product_name, department_name, price, stock_quantity) VALUES("Neutrogena Ultra Sheer Dry-Touch Water Resistant", "Beauty & Health", 8.52, 52);
 INSERT INTO products(product_name, department_name, price, stock_quantity) VALUES("The Body Shop Tea Tree Oil, 0.33 Fl Oz (Vegan)", "Beauty & Health", 10.00, 24);
 INSERT INTO products(product_name, department_name, price, stock_quantity) VALUES("Dove Beauty Bar Sensitive Skin 4 Ounce, 16 bars (2 x 8 bars)", "Beauty & Health", 15.39, 32);
+
+CREATE TABLE departments(
+	department_id INTEGER NOT NULL AUTO_INCREMENT,
+    department_name VARCHAR(50) NOT NULL,
+    over_head_costs INTEGER NOT NULL,
+    PRIMARY KEY(department_id)
+);
+
+INSERT INTO departments(department_name, over_head_costs) VALUES("Clothing & Shoes", 3000);
+INSERT INTO departments(department_name, over_head_costs) VALUES("Food & Grocery", 1500);
+INSERT INTO departments(department_name, over_head_costs) VALUES("Pet Supplies", 800);
+INSERT INTO departments(department_name, over_head_costs) VALUES("Beauty & Health", 1280);
