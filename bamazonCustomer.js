@@ -7,10 +7,31 @@ var conn = config.conn;
 conn.connect(function (err) {
     if (err) throw err;
     console.log("connected as Id " + conn.threadId + "\n");
-    dbViewer.viewAll(placeOrder);
+    customerOperations();
 });
 
-function placeOrder() {
+function customerOperations(){
+    inquirer.prompt([
+        {
+            name: "operation",
+            message: "Please select the operation you would like to perform: ",
+            type: "list",
+            choices: ["Place an order", "Quit"]
+        }
+    ]).then(function(inqRes){
+        switch(inqRes.operation){
+            case "Place an order":
+                placeOrder(customerOperations);
+                break;
+            case "Quit":
+            default:
+                conn.end();
+                break;
+        }
+    });
+}
+
+function placeOrder(func) {
     inquirer.prompt([
         {
             name: "productId",
@@ -27,7 +48,9 @@ function placeOrder() {
         const req_num_tobuy = parseInt(response.quantity);
 
         /**
-         * 
+         * SELECT price, stock_quantity
+         * FROM products
+         * WHERE item_id = req_item_id;
          */
         conn.query("SELECT price, stock_quantity FROM products WHERE item_id = ?", [req_item_id], function (err, dbRes) {
             if (err) throw err;
@@ -38,9 +61,9 @@ function placeOrder() {
                 let stock = dbRes[0].stock_quantity;
                 if (stock < req_num_tobuy) {
                     console.log("Insufficient quantity!");
-                    conn.end();
+                    func();
                 } else {
-                    dbUpdate.updateInventory(req_item_id, -req_num_tobuy, ()=>{conn.end()});
+                    dbUpdate.updateInventory(req_item_id, -req_num_tobuy, func);
                     let totalPrice = price * req_num_tobuy;
                     console.log("Your total price is " + totalPrice);
                 }
