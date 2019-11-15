@@ -4,7 +4,7 @@ var conn = config.conn;
 const divider = "+---------------------------------------------------------------------------------+";
 const lowInvent_threshold = 5;
 
-function viewAll(func) {
+function viewAll(func, isManager = false) {
     // //connect db
     // conn.connect(function (err) {
     //     if (err) throw err;
@@ -17,7 +17,7 @@ function viewAll(func) {
      */
     conn.query("SELECT * FROM products", function (err, dbRes) {
         if (err) throw err;
-        display(dbRes);
+        display(dbRes, isManager);
         // conn.end();
         if (func !== undefined) {
             func();
@@ -40,18 +40,19 @@ function viewLowInventory(func) {
     conn.query("SELECT * FROM products WHERE stock_quantity < ?", [lowInvent_threshold], function (err, dbRes) {
         // conn.end();
         if (err) throw err;
-        display(dbRes);
+        // only manager can view low inventory
+        display(dbRes, true);
         if (func !== undefined){
             func();
         }
     })
 }
 
-function display(dbRows) {
+function display(dbRows, isManager) {
     console.log(divider);
-    console.log("item_id | product name | product price");
+    console.log("item_id | product name | product price" + (isManager? " | stock quantity" : ""));
     dbRows.forEach(function (row) {
-        console.log(row.item_id + " | " + row.product_name + " | $" + row.price);
+        console.log(row.item_id + " | " + row.product_name + " | $" + row.price + (isManager? " | " + row.stock_quantity : ""));
     });
     console.log(divider);
 }

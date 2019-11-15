@@ -32,7 +32,7 @@ function updateInventory(req_item_id, quantity_tochange, func) {
     });
 }
 
-function addNewProduct(newProduct) {
+function addNewProduct(newProduct, func) {
     // //connect to db
     // conn.connect(function (err) {
     //     if (err) throw err;
@@ -46,9 +46,11 @@ function addNewProduct(newProduct) {
     conn.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?,?,?,?)", [
         newProduct.product_name, newProduct.department_name, newProduct.price, newProduct.stock_quantity
     ], function (err, result) {
-        // conn.end();
         if (err) throw err;
         console.log("Number of records inserted: " + result.affectedRows);
+        if (func !== undefined){
+            func();
+        }
     })
 }
 
