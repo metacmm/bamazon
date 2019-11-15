@@ -9,24 +9,45 @@ from the store's inventory, and track product sales across your store's departme
 
 bamazon App provides authorized operations based on user's role.
 
-* Customer
+* Customer - `node bamazonCustomer`
+    ![Image of customer operations](./screenshots/customer_1.png)
 
-    * View all items from store's inventory
+    * `View all items from store's inventory`
 
-    * Place order
+    ![Image of customer view all](./screenshots/customer_2.png)
 
-* Manager
+    * `Place order`
 
-    * View Products for Sale
+    ![Image of place order](./screenshots/customer_3.png)
+
+    * `Quit`
+
+
+* Manager - `node bamazonManager`
+    ![Image of manager operations](./screenshots/manager_1.png)
+
+    * `View Products for Sale`
+    ![Image of manager view all](./screenshots/manager_2.png)
     
-    * View Low Inventory 
+    * `View Low Inventory` 
+    ![Image of manager view low inventory](./screenshots/manager_3.png)
     
-    * Add to Inventory
+    * `Add to Inventory`
+    ![Image of manager adding to inventory](./screenshots/manager_4.png)
     
-    * Add New Product 
+    * `Add New Product` 
+    ![Image of manager adding new product](./screenshots/manager_5.png)
 
-* Supervisor
+    * `Quit`  
 
-    * View Product Sales by Department
+
+* Supervisor - `node bamazonSupervisor`
+    ![Image of supervisor operations](./screenshots/supervisor_1.png)
+
+    * `View Product Sales by Department`
+    ![Image of supervisor view sales](./screenshots/supervisor_2.png)
    
-    * Create New Department
+    * `Create New Department`
+    ![Image of supervisor new department](./screenshots/supervisor_3.png)
+
+    * `Quit`

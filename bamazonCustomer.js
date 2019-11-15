@@ -16,10 +16,13 @@ function customerOperations(){
             name: "operation",
             message: "Please select the operation you would like to perform: ",
             type: "list",
-            choices: ["Place an order", "Quit"]
+            choices: ["View all items","Place an order", "Quit"]
         }
     ]).then(function(inqRes){
         switch(inqRes.operation){
+            case "View all items":
+                dbViewer.viewAll(customerOperations);
+                break;
             case "Place an order":
                 placeOrder(customerOperations);
                 break;
