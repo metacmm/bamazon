@@ -54,10 +54,23 @@ function addNewProduct(newProduct, func) {
     })
 }
 
+function addNewDepartment(newDepartment, func){
+    conn.query("INSERT INTO departments (department_name, over_head_costs) VALUES (?, ?)", [
+        newDepartment.department_name, newDepartment.over_head_costs
+    ], function(err, result){
+        if (err) throw err;
+        console.log("Number of records inserted: " + result.affectedRows);
+        if (func !== undefined){
+            func();
+        }
+    })
+}
+
 module.exports = 
 {
     updateInventory: updateInventory,
-    addNewProduct: addNewProduct
+    addNewProduct: addNewProduct,
+    addNewDepartment: addNewDepartment
 };
 
 // addNewProduct({product_name: "Lancome eye cream",department_name: "Beauty & Health", price: 38.98, stock_quantity: 10});

@@ -24,9 +24,32 @@ function supervisorOperation(){
                 dbViewer.viewProductsByDepartment(supervisorOperation);
                 break;
             case "Create New Department":
+                addNewDepartment(supervisorOperation);
+                break;
             default:
                 conn.end();
         }
+    });
+}
+
+function addNewDepartment(func){
+    inquirer.prompt([
+        {
+            name: "department_name",
+            message: "Please input the new department name: ",
+            type: "input"
+        },
+        {
+            name: "over_head_costs",
+            message: "Please input the overhead cost of this deparment: ",
+            type: "input"
+        }
+    ]).then(function(inqRes){
+        let newDepartment = {
+            department_name: inqRes.department_name,
+            over_head_costs: parseFloat(inqRes.over_head_costs).toFixed(2)
+        }
+        dbUpdate.addNewDepartment(newDepartment, func);
     });
 }
 
