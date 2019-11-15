@@ -1,20 +1,13 @@
 var inquirer = require("inquirer");
-var mysql = require("mysql");
-
-var conn = mysql.createConnection({
-    host: "localhost",
-    port: 3306,
-    user: "root",
-    password: "mySQLPass1",
-    database: "bamazon"
-});
-
-const divider = "+---------------------------------------------------------------------------------+";
+var dbUpdate = require("./updatedb");
+var dbViewer = require("./viewdb");
+var config = require("./config");
+var conn = config.conn;
 
 conn.connect(function (err) {
     if (err) throw err;
-    console.log("connected as id " + conn.threadId + "\n");
-    displayAll();
+    console.log("connected as Id " + conn.threadId + "\n");
+    dbViewer.viewAll(placeOrder);
 });
 
 function placeOrder() {
@@ -32,52 +25,27 @@ function placeOrder() {
     ]).then(function (response) {
         const req_item_id = response.productId;
         const req_num_tobuy = response.quantity;
-        conn.query("SELECT DISTINCT price, stock_quantity FROM products WHERE ? ",
-            {
-                item_id: req_item_id
-            }, function (err, dbRes) {
-                if (err) throw err;
-                const rows = JSON.parse(JSON.stringify(dbRes));
-                if (rows.length == 0){
-                    console.log("Product Not Found!");
-                } else {
-                    const row = rows[0];
-                    processOrder(req_item_id, req_num_tobuy, row.stock_quantity, row.price);
-                }
-                conn.end();
-            });
-    });
-}
 
-function processOrder(req_item_id, req_num_tobuy, db_stock_quantity, db_item_price) {
-    //insufficient quantity
-    if (db_stock_quantity < req_num_tobuy) {
-        console.log("Insufficient quantity!");
-    } else {
-        conn.query("UPDATE products SET ? WHERE ?", [
-            {
-                stock_quantity: db_stock_quantity - req_num_tobuy
-            },
-            {
-                item_id: req_item_id
-            }
-        ], function (err, res) {
+        /**
+         * 
+         */
+        conn.query("SELECT price, stock_quantity FROM products WHERE item_id = ?", [req_item_id], function (err, dbRes) {
             if (err) throw err;
+            const rows = JSON.parse(JSON.stringify(dbRes));
+            if (rows.length == 0) {
+                console.log("Product Not Found!");
+            } else {
+                const row = rows[0];
+                if (row.stock_quantity < req_num_tobuy) {
+                    console.log("Insufficient quantity!");
+                    conn.end();
+                } else {
+                    dbUpdate.updateInventory(req_item_id, row.stock_quantity - req_num_tobuy, ()=>{conn.end()});
+                    let totalPrice = row.price * req_num_tobuy;
+                    console.log("Your total price is " + totalPrice);
+                }
+            }
         });
-        let totalPrice = db_item_price * req_num_tobuy;
-        console.log("Your total price is " + totalPrice);
-    }
-}
-function displayAll() {
-    conn.query("SELECT * FROM products", function (err, response) {
-        if (err) throw err;
-        console.log(divider);
-        console.log("item_id    | product name | product price");
-        response.forEach(function (row) {
-            console.log(row.item_id + " | " + row.product_name + " | $" + row.price);
-        });
-        console.log(divider);
-        placeOrder();
     });
 }
 
